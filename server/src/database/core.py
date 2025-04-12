@@ -17,6 +17,7 @@ AsyncSessionLocal = async_sessionmaker(
     expire_on_commit=False,
 )
 
+
 class Base:
     def dict(self) -> dict[Any, Any]:
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}  # pyright: ignore
