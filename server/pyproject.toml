@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 dependencies = [
     "aiosqlite>=0.21.0",
     "asyncpg>=0.30.0",
+    "fastapi-azure-auth>=5.1.1",
     "fastapi[standard]~=0.115.11",
     "greenlet>=3.1.1",
     "psycopg2-binary>=2.9.10",
