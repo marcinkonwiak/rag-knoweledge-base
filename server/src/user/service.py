@@ -7,9 +7,7 @@ from src.user.schemas import UserRead
 
 
 class UserService:
-    def __init__(
-        self, user_repository: Annotated[UserRepository, Depends(get_user_repository)]
-    ):
+    def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
     async def get_user(self, user_id: int) -> UserRead:
