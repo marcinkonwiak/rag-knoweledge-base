@@ -1,20 +1,29 @@
-from pydantic import BaseModel, Field
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class UserInDB(BaseModel):
+    id: int
+    azure_id: UUID
+    email: str | None
+    name: str | None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserRead(BaseModel):
     id: int
-    email: str
-    full_name: str | None
+    email: str | None
+    name: str | None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(extra="ignore")
 
 
 class UserCreate(BaseModel):
-    azure_ad_id: str
-    email: str
-    full_name: str | None = Field(max_length=100)
+    azure_id: str
+    name: str | None
 
 
 class UserUpdate(BaseModel):
-    full_name: str | None = Field(max_length=100)
+    name: str | None = Field(max_length=100)

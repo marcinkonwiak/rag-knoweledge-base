@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class DocumentRead(BaseModel):
@@ -7,8 +7,7 @@ class DocumentRead(BaseModel):
     content: str | None
     created_by_id: int | None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class DocumentCreate(BaseModel):

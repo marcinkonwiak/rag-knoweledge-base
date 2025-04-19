@@ -1,9 +1,10 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 
 from src.document.repository import DocumentRepository, get_document_repository
 from src.document.schemas import DocumentRead
+from src.exceptions import ResourceNotFoundException
 
 
 class DocumentService:
@@ -13,9 +14,7 @@ class DocumentService:
     async def get_document(self, document_id: int) -> DocumentRead:
         doc = await self.document_repository.get_by_id(document_id)
         if not doc:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Document not found"
-            )
+            raise ResourceNotFoundException()
         return doc
 
     async def get_documents(
