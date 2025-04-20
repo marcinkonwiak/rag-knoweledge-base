@@ -27,9 +27,9 @@ async def azure_user(
         )
 
     try:
-        user = await user_service.get_user_by_azure_id(azure_user.oid)
+        user = await user_service.get_by_azure_id(azure_user.oid)
     except ResourceNotFoundException:
-        user = await user_service.create_user(
+        user = await user_service.create(
             UserCreate(azure_id=azure_user.oid, name=azure_user.name)
         )
 

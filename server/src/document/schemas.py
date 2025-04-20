@@ -1,13 +1,21 @@
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class DocumentRead(BaseModel):
+class DocumentInDB(BaseModel):
     id: int
     title: str
     content: str | None
     created_by_id: int | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class DocumentRead(BaseModel):
+    id: int
+    title: str
+    content: str | None
+
+    model_config = ConfigDict(extra="ignore")
 
 
 class DocumentCreate(BaseModel):
