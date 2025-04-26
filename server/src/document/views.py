@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from src.document.schemas import DocumentCreate, DocumentInDB
+from src.document.schemas import DocumentCreate, DocumentInDB, DocumentUpdate
 from src.document.service import DocumentService, get_document_service
 
 router = APIRouter()
@@ -31,3 +31,12 @@ async def create_document(
     document: DocumentCreate,
 ) -> DocumentInDB:
     return await document_service.create(document=document)
+
+
+@router.patch("/{document_id}")
+async def update_document(
+    document_id: int,
+    document_service: Annotated[DocumentService, Depends(get_document_service)],
+    document: DocumentUpdate,
+) -> DocumentInDB:
+    return await document_service.update(document_id=document_id, document=document)

@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = ""
     BACKEND_CORS_ORIGINS: list[str | AnyHttpUrl] = ["http://localhost:8000"]
     GEMINI_API_KEY: str = ""
+    GOOGLE_API_KEY: str = ""
     OPENAPI_CLIENT_ID: str = ""
     APP_CLIENT_ID: str = ""
     TENANT_ID: str = ""
