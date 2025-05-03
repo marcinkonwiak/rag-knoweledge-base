@@ -1,6 +1,6 @@
-import { Configuration, PublicClientApplication } from "@azure/msal-browser";
+import { Configuration } from "@azure/msal-browser";
 
-const msalConfig: Configuration = {
+export const msalConfig: Configuration = {
   auth: {
     clientId: "2d337173-e679-4f1a-85b1-94c60107ab45",
     authority:
@@ -10,11 +10,9 @@ const msalConfig: Configuration = {
   },
   cache: {
     cacheLocation: "sessionStorage",
-    storeAuthStateInCookie: false,
   },
 };
 
-export const msalInstance = new PublicClientApplication(msalConfig);
 
 export const loginRequest = {
   scopes: ["User.Read"],

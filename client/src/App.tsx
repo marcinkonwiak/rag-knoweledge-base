@@ -1,31 +1,23 @@
-import "./App.css";
+import {createRouter, RouterProvider} from "@tanstack/react-router";
+import {AuthState, useAuth} from "./auth";
+import {routeTree} from "@/routeTree.gen.ts";
 
-function App() {
-  return (
-    <>
-      <div
-        className="
-           bg-blue-100
-           text-blue-800
-           font-semibold
-           py-2
-           px-4
-           rounded-full
-           hover:bg-blue-200
-           focus:outline-none
-           focus:ring-2
-           focus:ring-blue-500
-           transition
-           duration-300
-           ease-in-out
-           m-4
-           shadow-md
-         "
-      >
-        Hello, Tailwind CSS!
-      </div>
-    </>
-  );
+const router = createRouter({
+    routeTree,
+    context: {
+        auth: undefined! as AuthState
+    }
+});
+
+declare module "@tanstack/react-router" {
+    interface Register {
+        router: typeof router;
+    }
 }
 
-export default App;
+
+export function App() {
+    const auth = useAuth();
+
+    return <RouterProvider router={router} context={{auth}}/>;
+}

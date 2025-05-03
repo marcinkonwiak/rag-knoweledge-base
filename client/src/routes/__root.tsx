@@ -1,94 +1,52 @@
-import { loginRequest } from "@/authConfig";
-import { Button } from "@/components/ui/button";
-import { PublicClientApplication } from "@azure/msal-browser";
-import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import {
-  createRootRouteWithContext,
-  Link,
-  Outlet,
-  redirect,
-  useRouterState,
+    createRootRouteWithContext,
+    Link,
+    Outlet,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import {TanStackRouterDevtools} from "@tanstack/react-router-devtools";
+import {RouterContext} from "@/routerContext.ts";
+import {useAuth} from "@/auth.tsx";
+import React from "react";
 
-interface RouterContext {
-  msalInstance: PublicClientApplication;
-}
 
-export const Route = createRootRouteWithContext()<RouterContext>({
-  beforeLoad: ({ context, location }) => {
-    const isAuthenticated = context.msalInstance.getActiveAccount() !== null;
-    if (!isAuthenticated && location.pathname !== "/login") {
-      throw redirect({
-        to: "/login",
-        search: {
-          redirect: location.href,
-        },
-        replace: true,
-      });
-    }
-    if (isAuthenticated && location.pathname === "/login") {
-      throw redirect({
-        to: "/",
-        replace: true,
-      });
-    }
-  },
-  component: RootComponent,
-});
+const RootComponent: React.FC = () => {
+    const {isAuthenticated, user, login, logout, isLoading} = useAuth();
 
-function AuthStatus() {
-  const { instance } = useMsal();
-  const isAuthenticated = useIsAuthenticated();
-  const account = instance.getActiveAccount();
-
-  const handleLogin = () => {
-    instance.loginRedirect(loginRequest).catch((e) => {
-      console.error("Login redirect failed:", e);
-    });
-  };
-
-  const handleLogout = () => {
-    instance.logoutRedirect({ postLogoutRedirectUri: "/" }).catch((e) => {
-      console.error("Logout redirect failed:", e);
-    });
-  };
-
-  return (
-    <div className="p-2 flex gap-2 items-center">
-      {isAuthenticated ? (
+    return (
         <>
-          <span>Welcome, {account?.name ?? account?.username ?? "User"}!</span>
-          <Button onClick={handleLogout} variant="outline" size="sm">
-            Sign Out
-          </Button>
+            <div style={{padding: "1rem", borderBottom: "1px solid #ccc"}}>
+                <Link to="/" style={{marginRight: "1rem"}}>
+                    Home
+                </Link>
+                {isAuthenticated && (
+                    <Link to="/dashboard" style={{marginRight: "1rem"}}>
+                        Dashboard (Protected)
+                    </Link>
+                )}
+                <div style={{float: "right"}}>
+                    {isLoading ? (
+                        <span>Loading...</span>
+                    ) : isAuthenticated ? (
+                        <>
+              <span style={{marginRight: "0.5rem"}}>
+                Hello, {user?.name || user?.username || "User"}!
+              </span>
+                            <button onClick={() => logout()}>Logout</button>
+                        </>
+                    ) : (
+                        <button onClick={() => login()}>Login</button>
+                    )}
+                </div>
+            </div>
+            <hr/>
+            <div style={{padding: "1rem"}}>
+                <Outlet/>
+            </div>
+            <TanStackRouterDevtools/>
         </>
-      ) : (
-        <Button onClick={handleLogin} variant="outline" size="sm">
-          Sign In
-        </Button>
-      )}
-    </div>
-  );
-}
+    );
+};
 
-function RootComponent() {
-  const isLoading = useRouterState({ select: (s) => s.status === "pending" });
-
-  return (
-    <>
-      <div className="p-2 flex gap-2 justify-between items-center">
-        <nav className="flex gap-2">
-          <Link to="/" className="[&.active]:font-bold">
-            Home
-          </Link>{" "}
-        </nav>
-        <AuthStatus />
-      </div>
-      <hr />
-      {isLoading && <div className="p-2">Loading...</div>}
-      <Outlet />
-      <TanStackRouterDevtools position="bottom-right" />
-    </>
-  );
-}
+export const Route = createRootRouteWithContext<RouterContext>()({
+    component: RootComponent,
+});
