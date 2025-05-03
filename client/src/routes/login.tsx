@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { createFileRoute, useRouter, useNavigate } from "@tanstack/react-router";
-import { useAuth } from "../auth"; // Use our custom auth hook
+import {useAuth} from "@/authHooks.ts";
 
 interface LoginSearch {
   redirect?: string;

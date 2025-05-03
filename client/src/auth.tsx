@@ -1,20 +1,16 @@
-import React, {
-    createContext,
-    useContext,
-    useState,
-    useEffect,
-    useMemo,
-} from "react";
+import React, {useCallback, useEffect, useMemo, useState,} from "react";
 import {
-    PublicClientApplication,
-    EventType,
-    EventMessage,
-    AuthenticationResult,
     AccountInfo,
+    AuthenticationResult,
+    AuthError,
+    EventMessage,
+    EventType,
     InteractionStatus,
+    PublicClientApplication,
 } from "@azure/msal-browser";
-import {MsalProvider, useMsal, useIsAuthenticated} from "@azure/msal-react";
-import {loginRequest, msalConfig} from "@/authConfig.ts";
+import {MsalProvider, useIsAuthenticated, useMsal} from "@azure/msal-react";
+import {loginRequest, msalConfig} from "@/authConfig";
+import {AuthContext as AuthContext1} from "@/authHooks.ts";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -27,7 +23,9 @@ msalInstance.addEventCallback((event: EventMessage) => {
     if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
         const payload = event.payload as AuthenticationResult;
         const account = payload.account;
-        msalInstance.setActiveAccount(account);
+        if (account) {
+            msalInstance.setActiveAccount(account);
+        }
     }
 });
 
@@ -39,8 +37,6 @@ export interface AuthState {
     isLoading: boolean;
 }
 
-const AuthContext = createContext<AuthState | undefined>(undefined);
-
 interface AuthProviderProps {
     children: React.ReactNode;
 }
@@ -49,17 +45,15 @@ const AuthProviderInternal: React.FC<AuthProviderProps> = ({children}) => {
     const {instance, accounts, inProgress} = useMsal();
     const isAuth = useIsAuthenticated();
     const [user, setUser] = useState<AccountInfo | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        setIsLoading(inProgress !== InteractionStatus.None);
-
         if (accounts.length > 0) {
             setUser(accounts[0]);
         } else {
             setUser(null);
         }
-    }, [accounts, inProgress]);
+    }, [accounts]);
 
     useEffect(() => {
         instance
@@ -67,16 +61,16 @@ const AuthProviderInternal: React.FC<AuthProviderProps> = ({children}) => {
             .then(() => {
                 return instance.handleRedirectPromise();
             })
-            .then((response) => {
+            .then((response: AuthenticationResult | null) => {
                 if (response) {
                     instance.setActiveAccount(response.account);
-                    setUser(response.account);
+                    setUser(response.account); // Update user state
                     if (response.state) {
-                        console.log("Redirect state found:", response.state);
+                        console.log("Redirect state received:", response.state);
                     }
                 }
             })
-            .catch((error) => {
+            .catch((error: AuthError | unknown) => {
                 console.error("MSAL handleRedirectPromise error:", error);
             })
             .finally(() => {
@@ -84,32 +78,34 @@ const AuthProviderInternal: React.FC<AuthProviderProps> = ({children}) => {
             });
     }, [instance]);
 
-    const login = (redirectPath?: string) => {
-        setIsLoading(true);
-        instance
-            .loginRedirect({
-                ...loginRequest,
-                state: redirectPath || window.location.pathname + window.location.search,
-            })
-            .catch((e) => {
-                console.error("MSAL loginRedirect error:", e);
-                setIsLoading(false);
-            });
-    };
+    const login = useCallback(
+        (redirectPath?: string) => {
+            setIsLoading(true);
+            instance
+                .loginRedirect({
+                    ...loginRequest,
+                    state:
+                        redirectPath || window.location.pathname + window.location.search,
+                })
+                .catch((e) => {
+                    console.error("MSAL loginRedirect error:", e);
+                    setIsLoading(false);
+                });
+        },
+        [instance, setIsLoading],
+    );
 
-    const logout = () => {
+    const logout = useCallback(() => {
         const currentAccount = instance.getActiveAccount();
-        if (currentAccount) {
-            instance.logoutRedirect({
-                account: currentAccount,
-                postLogoutRedirectUri: msalConfig.auth.postLogoutRedirectUri,
-            });
-        } else {
-            instance.logoutRedirect({
-                postLogoutRedirectUri: msalConfig.auth.postLogoutRedirectUri,
-            });
-        }
-    };
+        const logoutRequest = {
+            account: currentAccount,
+            postLogoutRedirectUri: msalConfig.auth.postLogoutRedirectUri,
+        };
+
+        instance.logoutRedirect(logoutRequest).catch((e) => {
+            console.error("MSAL logoutRedirect error:", e);
+        });
+    }, [instance]);
 
     const authContextValue = useMemo(
         () => ({
@@ -123,9 +119,9 @@ const AuthProviderInternal: React.FC<AuthProviderProps> = ({children}) => {
     );
 
     return (
-        <AuthContext.Provider value={authContextValue}>
+        <AuthContext1 value={authContextValue}>
             {children}
-        </AuthContext.Provider>
+        </AuthContext1>
     );
 };
 
@@ -137,10 +133,3 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     );
 };
 
-export const useAuth = (): AuthState => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
-};

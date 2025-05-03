@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-router";
 import {TanStackRouterDevtools} from "@tanstack/react-router-devtools";
 import {RouterContext} from "@/routerContext.ts";
-import {useAuth} from "@/auth.tsx";
+import {useAuth} from "@/authHooks.ts";
 import React from "react";
 
 

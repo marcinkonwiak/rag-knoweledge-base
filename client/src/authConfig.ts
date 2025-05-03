@@ -13,7 +13,6 @@ export const msalConfig: Configuration = {
   },
 };
 
-
 export const loginRequest = {
   scopes: ["User.Read"],
 };
