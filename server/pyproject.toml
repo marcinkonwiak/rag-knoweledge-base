@@ -53,6 +53,7 @@ include = ["src"]
 
 exclude = ["**/migrations/*"]
 
+typeCheckingMode = "recommended"
 reportAny = false
 reportExplicitAny = false
 reportUnusedCallResult = false

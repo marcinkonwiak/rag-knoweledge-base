@@ -1,6 +1,10 @@
 import { useEffect } from "react";
-import { createFileRoute, useRouter, useNavigate } from "@tanstack/react-router";
-import {useAuth} from "@/authHooks.ts";
+import {
+  createFileRoute,
+  useRouter,
+  useNavigate,
+} from "@tanstack/react-router";
+import { useAuth } from "@/authHooks.ts";
 
 interface LoginSearch {
   redirect?: string;
@@ -37,12 +41,12 @@ function LoginComponent() {
   }
 
   return (
-      <div>
-        <h2>Login Required</h2>
-        <p>You must log in to access the requested page.</p>
-        <button onClick={handleLogin} disabled={isLoading}>
-          {isLoading ? "Logging in..." : "Log In with Microsoft"}
-        </button>
-      </div>
+    <div>
+      <h2>Login Required</h2>
+      <p>You must log in to access the requested page.</p>
+      <button onClick={handleLogin} disabled={isLoading}>
+        {isLoading ? "Logging in..." : "Log In with Microsoft"}
+      </button>
+    </div>
   );
 }
