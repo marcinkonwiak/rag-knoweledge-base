@@ -13,7 +13,8 @@ interface LoginSearch {
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>): LoginSearch => {
     return {
-      redirect: typeof search.redirect === "string" ? search.redirect : "/",
+      redirect:
+        typeof search.redirect === "string" ? search.redirect : "/login",
     };
   },
   component: LoginComponent,
@@ -33,7 +34,8 @@ function LoginComponent() {
   }, [isAuthenticated, isLoading, navigate, search.redirect, router.history]);
 
   const handleLogin = () => {
-    login(search.redirect);
+    // login(search.redirect);
+    login();
   };
 
   if (isLoading || isAuthenticated) {
