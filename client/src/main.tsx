@@ -1,17 +1,20 @@
 import { StrictMode } from "react";
 import "./index.css";
 import ReactDOM from "react-dom/client";
-import { AuthProvider, AuthState } from "@/auth.tsx";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "@/routeTree.gen.ts";
-import { useAuth } from "@/authHooks.ts";
 import { ThemeProvider } from "@/components/theme-provider.tsx";
+import {
+  AuthenticationResult,
+  AuthError,
+  EventType,
+  PublicClientApplication,
+} from "@azure/msal-browser";
+import { msalConfig } from "@/authConfig.ts";
+import { MsalProvider } from "@azure/msal-react";
 
 const router = createRouter({
   routeTree,
-  context: {
-    auth: undefined! as AuthState,
-  },
   defaultPreload: "intent",
 });
 
@@ -21,22 +24,61 @@ declare module "@tanstack/react-router" {
   }
 }
 
+const msalInstance = new PublicClientApplication(msalConfig);
+
+msalInstance.addEventCallback((event) => {
+  if (
+    event.payload &&
+    (event.eventType === EventType.LOGIN_SUCCESS ||
+      event.eventType === EventType.ACQUIRE_TOKEN_SUCCESS ||
+      event.eventType === EventType.SSO_SILENT_SUCCESS)
+  ) {
+    const payload = event.payload as AuthenticationResult;
+    if (payload.account) {
+      msalInstance.setActiveAccount(payload.account);
+    }
+  }
+});
+
+msalInstance
+  .initialize()
+  .then(() => {
+    return msalInstance.handleRedirectPromise();
+  })
+  .then((response: AuthenticationResult | null) => {
+    if (response && response.account) {
+      msalInstance.setActiveAccount(response.account);
+      if (response.state) {
+        console.log("Redirect state received:", response.state);
+      }
+    }
+  })
+  .catch((error: AuthError | unknown) => {
+    console.error("MSAL initialize or handleRedirectPromise error:", error);
+  })
+  .finally(() => {
+    if (
+      !msalInstance.getActiveAccount() &&
+      msalInstance.getAllAccounts().length > 0
+    ) {
+      msalInstance.setActiveAccount(msalInstance.getAllAccounts()[0]);
+    }
+
+    const rootElement = document.getElementById("root")!;
+    if (!rootElement.innerHTML) {
+      const root = ReactDOM.createRoot(rootElement);
+      root.render(
+        <StrictMode>
+          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+            <MsalProvider instance={msalInstance}>
+              <App />
+            </MsalProvider>
+          </ThemeProvider>
+        </StrictMode>,
+      );
+    }
+  });
+
 export function App() {
-  const auth = useAuth();
-
-  return <RouterProvider router={router} context={{ auth }} />;
-}
-
-const rootElement = document.getElementById("root")!;
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
-    <StrictMode>
-      <AuthProvider>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <App />
-        </ThemeProvider>
-      </AuthProvider>
-    </StrictMode>,
-  );
+  return <RouterProvider router={router} />;
 }

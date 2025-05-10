@@ -12,10 +12,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/authHooks.ts";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user, logout } = useAuth();
+  // const { user, logout } = useAuth();
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -39,13 +38,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavItems />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser
-          user={{
-            name: user?.name || "",
-            email: user?.username || "",
-          }}
-          logout={logout}
-        />
+        {/*<NavUser*/}
+        {/*  user={{*/}
+        {/*    name: user?.name || "",*/}
+        {/*    email: user?.username || "",*/}
+        {/*  }}*/}
+        {/*  logout={logout}*/}
+        {/*/>*/}
       </SidebarFooter>
     </Sidebar>
   );

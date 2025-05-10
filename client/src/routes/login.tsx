@@ -1,10 +1,5 @@
 import { useEffect } from "react";
-import {
-  createFileRoute,
-  useRouter,
-  useNavigate,
-} from "@tanstack/react-router";
-import { useAuth } from "@/authHooks.ts";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Card,
   CardContent,
@@ -13,37 +8,28 @@ import {
 } from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Loader2 } from "lucide-react";
-
-interface LoginSearch {
-  redirect?: string;
-}
+import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: (search: Record<string, unknown>): LoginSearch => {
-    return {
-      redirect:
-        typeof search.redirect === "string" ? search.redirect : "/login",
-    };
-  },
   component: LoginComponent,
 });
 
 function LoginComponent() {
-  const { login, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate({ from: Route.fullPath });
-  const search = Route.useSearch();
-  const router = useRouter();
+  const isAuthenticated = useIsAuthenticated();
 
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      console.log("Already authenticated, redirecting to:", search.redirect);
-      navigate({ to: search.redirect || "/", replace: true });
-    }
-  }, [isAuthenticated, isLoading, navigate, search.redirect, router.history]);
+  const { instance, accounts, inProgress } = useMsal();
 
   const handleLogin = () => {
-    login(search.redirect);
+    instance.loginPopup().then();
   };
+
+  useEffect(() => {
+    if (accounts.length > 0) {
+      console.log("User is already logged in:", accounts[0]);
+      navigate({ to: "/", replace: true }).then();
+    }
+  }, [accounts, navigate, isAuthenticated]);
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
@@ -52,7 +38,7 @@ function LoginComponent() {
           <CardTitle className="text-xl">Login</CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading || isAuthenticated ? (
+          {inProgress === "login" ? (
             <Loader2 className="h-8 w-8 animate-spin" />
           ) : (
             <Button onClick={handleLogin}>Login with Microsoft</Button>
