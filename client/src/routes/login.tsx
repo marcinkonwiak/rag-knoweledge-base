@@ -5,6 +5,14 @@ import {
   useNavigate,
 } from "@tanstack/react-router";
 import { useAuth } from "@/authHooks.ts";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Loader2 } from "lucide-react";
 
 interface LoginSearch {
   redirect?: string;
@@ -34,21 +42,23 @@ function LoginComponent() {
   }, [isAuthenticated, isLoading, navigate, search.redirect, router.history]);
 
   const handleLogin = () => {
-    // login(search.redirect);
-    login();
+    login(search.redirect);
   };
 
-  if (isLoading || isAuthenticated) {
-    return <div>Loading authentication status...</div>;
-  }
-
   return (
-    <div>
-      <h2>Login Required</h2>
-      <p>You must log in to access the requested page.</p>
-      <button onClick={handleLogin} disabled={isLoading}>
-        {isLoading ? "Logging in..." : "Log In with Microsoft"}
-      </button>
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle className="text-xl">Login</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading || isAuthenticated ? (
+            <Loader2 className="h-8 w-8 animate-spin" />
+          ) : (
+            <Button onClick={handleLogin}>Login with Microsoft</Button>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
