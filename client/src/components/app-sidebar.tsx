@@ -12,9 +12,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useMsal } from "@azure/msal-react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  // const { user, logout } = useAuth();
+  const { instance } = useMsal();
+  const user = instance.getActiveAccount();
+  const logout = () => {
+    instance.logoutPopup().then(() => {
+      instance.setActiveAccount(null);
+    });
+  };
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -38,13 +45,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavItems />
       </SidebarContent>
       <SidebarFooter>
-        {/*<NavUser*/}
-        {/*  user={{*/}
-        {/*    name: user?.name || "",*/}
-        {/*    email: user?.username || "",*/}
-        {/*  }}*/}
-        {/*  logout={logout}*/}
-        {/*/>*/}
+        {user && (
+          <NavUser
+            user={{
+              name: user.name || "",
+              email: user.username || "",
+            }}
+            logout={logout}
+          />
+        )}
       </SidebarFooter>
     </Sidebar>
   );

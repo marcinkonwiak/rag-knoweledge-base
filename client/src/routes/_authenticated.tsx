@@ -27,7 +27,7 @@ export function Authenticated() {
   const navigate = useNavigate({ from: Route.fullPath });
 
   useEffect(() => {
-    if (inProgress === "none" && !isAuthenticated && accounts.length === 0) {
+    if (inProgress === "none" && !isAuthenticated) {
       navigate({
         to: "/login",
       }).then();

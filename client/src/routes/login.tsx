@@ -25,8 +25,7 @@ function LoginComponent() {
   };
 
   useEffect(() => {
-    if (accounts.length > 0) {
-      console.log("User is already logged in:", accounts[0]);
+    if (isAuthenticated) {
       navigate({ to: "/", replace: true }).then();
     }
   }, [accounts, navigate, isAuthenticated]);
