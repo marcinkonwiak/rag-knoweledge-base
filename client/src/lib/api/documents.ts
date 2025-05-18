@@ -17,12 +17,14 @@ export async function fetchDocuments(
   account: AccountInfo,
 ): Promise<Document[]> {
   const { accessToken } = await instance.acquireTokenSilent({
-    scopes: ["User.Read"],
+    scopes: ["api://78637b4f-3088-4520-adba-bd9809392f9e/user_impersonation"],
+    authority:
+      "https://login.microsoftonline.com/d267408e-f179-4c25-a9f7-e52293bafeae",
     account,
   });
   const response = await fetch("http://localhost:8000/api/documents/", {
     headers: {
-      // Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   });
 

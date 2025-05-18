@@ -2,7 +2,7 @@ import { Configuration } from "@azure/msal-browser";
 
 export const msalConfig: Configuration = {
   auth: {
-    clientId: "2d337173-e679-4f1a-85b1-94c60107ab45",
+    clientId: "78637b4f-3088-4520-adba-bd9809392f9e",
     authority:
       "https://login.microsoftonline.com/d267408e-f179-4c25-a9f7-e52293bafeae",
     redirectUri: "http://localhost:5173/",
@@ -15,5 +15,4 @@ export const msalConfig: Configuration = {
 
 export const loginRequest = {
   scopes: ["user_impersonation"],
-  // scopes: ["User.Read"],
 };
