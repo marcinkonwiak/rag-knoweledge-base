@@ -12,11 +12,14 @@ import {
 } from "@azure/msal-browser";
 import { msalConfig } from "@/authConfig.ts";
 import { MsalProvider } from "@azure/msal-react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const router = createRouter({
   routeTree,
   defaultPreload: "intent",
 });
+
+const queryClient = new QueryClient();
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -69,11 +72,13 @@ msalInstance
       const root = ReactDOM.createRoot(rootElement);
       root.render(
         <StrictMode>
-          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-            <MsalProvider instance={msalInstance}>
-              <App />
-            </MsalProvider>
-          </ThemeProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+              <MsalProvider instance={msalInstance}>
+                <App />
+              </MsalProvider>
+            </ThemeProvider>
+          </QueryClientProvider>
         </StrictMode>,
       );
     }

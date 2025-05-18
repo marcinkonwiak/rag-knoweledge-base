@@ -6,12 +6,15 @@ from sqlalchemy import make_url
 
 from src.settings import settings
 
-Settings.llm = GoogleGenAI()
-Settings.embed_model = GoogleGenAIEmbedding()
+# Settings.llm = GoogleGenAI()
+# Settings.embed_model = GoogleGenAIEmbedding()
 
 
 class AiService:
     def generate_embedding(self, text: str) -> ...:
+        Settings.llm = GoogleGenAI()
+        Settings.embed_model = GoogleGenAIEmbedding()
+
         doc = Document(text=text)
         url = make_url(settings.DATABASE_URL)
         vector_store = PGVectorStore.from_params(
@@ -41,6 +44,7 @@ class AiService:
         )
         qe = index.as_query_engine(llm=GoogleGenAI())
         print(qe.query("What is the capital of France?"))
+
 
 def get_ai_service() -> AiService:
     return AiService()
