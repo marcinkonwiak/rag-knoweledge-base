@@ -23,7 +23,7 @@ function Index() {
   });
 
   const handleDataChange = () => {
-    queryClient.invalidateQueries({ queryKey: ["documents"] });
+    queryClient.invalidateQueries({ queryKey: ["documents"] }).then();
   };
 
   if (isLoading) return <div>Loading…</div>;
@@ -33,7 +33,10 @@ function Index() {
     <>
       <AppHeader breadcrumbTitle={"Documents"} />
       <div className="p-6">
-        <DocumentsTable data={documents ?? []} onDataChange={handleDataChange} />
+        <DocumentsTable
+          data={documents ?? []}
+          onDataChange={handleDataChange}
+        />
       </div>
     </>
   );

@@ -1,4 +1,5 @@
-import { Frame } from "lucide-react";
+import { Frame, MessageCircle } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 import {
   SidebarGroup,
@@ -15,18 +16,18 @@ export function NavItems() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <a href="">
+            <Link to="/">
               <Frame />
               <span>Documents</span>
-            </a>
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <a href="">
-              <Frame />
+            <Link to="/chat">
+              <MessageCircle />
               <span>Chat</span>
-            </a>
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
