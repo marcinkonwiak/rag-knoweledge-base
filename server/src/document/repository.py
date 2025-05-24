@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.core import DbSession
 from src.document.models import Document
-from src.document.schemas import DocumentCreate, DocumentInDB, DocumentUpdate
+from src.document.schemas import DocumentInDB, DocumentInput
 
 
 class DocumentRepository:
@@ -11,7 +11,7 @@ class DocumentRepository:
         self.session = session
 
     async def get_by_id(self, id: int) -> DocumentInDB | None:
-        doc = await self.session.get(DocumentInDB, id)
+        doc = await self.session.get(Document, id)
         if doc:
             return DocumentInDB.model_validate(doc)
 
@@ -23,14 +23,14 @@ class DocumentRepository:
         docs = result.scalars().all()
         return [DocumentInDB.model_validate(doc) for doc in docs]
 
-    async def create(self, *, obj_in: DocumentCreate) -> DocumentInDB:
+    async def create(self, *, obj_in: DocumentInput) -> DocumentInDB:
         doc = Document(**obj_in.model_dump())
         self.session.add(doc)
         await self.session.commit()
         await self.session.refresh(doc)
         return DocumentInDB.model_validate(doc)
 
-    async def update(self, *, id: int, obj_in: DocumentUpdate) -> DocumentInDB | None:
+    async def update(self, *, id: int, obj_in: DocumentInput) -> DocumentInDB | None:
         doc = await self.session.get(Document, id)
         if not doc:
             return None

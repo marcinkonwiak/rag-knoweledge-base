@@ -18,10 +18,6 @@ class DocumentRead(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
 
-class DocumentCreate(BaseModel):
-    title: str = Field(min_length=1, max_length=255)
-
-
-class DocumentUpdate(BaseModel):
+class DocumentInput(BaseModel):
     title: str = Field(min_length=1, max_length=255)
     content: str | None = Field(default=None, max_length=10000)
