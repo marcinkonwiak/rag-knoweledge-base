@@ -38,7 +38,7 @@ export async function updateDocument(
   id: number,
   data: Partial<Omit<ApiDocument, "id" | "created_by_id">>,
 ): Promise<ApiDocument> {
-  return apiClient.put<ApiDocument>(`/documents/${id}/`, data);
+  return apiClient.patch<ApiDocument>(`/documents/${id}/`, data);
 }
 
 export async function deleteDocument(
