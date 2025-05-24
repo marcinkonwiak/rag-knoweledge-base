@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppHeader } from "@/components/app-header.tsx";
-import { DataTable } from "@/components/documents/data-table.tsx";
+import { DocumentsTable } from "@/components/documents/documents-table.tsx";
 import type { Document } from "@/lib/api/documents";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchDocuments } from "@/lib/api/documents";
@@ -33,7 +33,7 @@ function Index() {
     <>
       <AppHeader breadcrumbTitle={"Documents"} />
       <div className="p-6">
-        <DataTable data={documents ?? []} onDataChange={handleDataChange} />
+        <DocumentsTable data={documents ?? []} onDataChange={handleDataChange} />
       </div>
     </>
   );
