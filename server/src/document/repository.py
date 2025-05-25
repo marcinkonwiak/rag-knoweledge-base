@@ -45,6 +45,19 @@ class DocumentRepository:
         await self.session.refresh(doc)
         return DocumentInDB.model_validate(doc)
 
+    async def update_embeddings(
+        self, *, id: int, vector: list[float]
+    ) -> DocumentInDB | None:
+        doc = await self.session.get(Document, id)
+        if not doc:
+            return None
+
+        doc.vector = vector  # pyright: ignore [reportAttributeAccessIssue]
+        self.session.add(doc)
+        await self.session.commit()
+        await self.session.refresh(doc)
+        return DocumentInDB.model_validate(doc)
+
     async def delete(self, *, id: int) -> DocumentInDB | None:
         doc = await self.session.get(Document, id)
         if not doc:

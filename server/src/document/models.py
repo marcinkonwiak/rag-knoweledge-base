@@ -18,4 +18,4 @@ class Document(Base):
     content: Mapped[str] = mapped_column(Text, nullable=True)
     created_by_id: Mapped[int] = mapped_column(ForeignKey("usr.id"), nullable=True)
     created_by: Mapped["User"] = relationship(back_populates="documents")
-    vector: Mapped[VECTOR] = mapped_column(VECTOR(768), nullable=True)
+    vector: Mapped[VECTOR] = mapped_column(VECTOR(3072), nullable=True)

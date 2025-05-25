@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from src.ai.service import AiService
+from src.ai.service import AiService, get_ai_service
 from src.document.repository import DocumentRepository, get_document_repository
 from src.document.schemas import DocumentInDB, DocumentInput
 from src.exceptions import ResourceNotFoundException
@@ -34,8 +34,15 @@ class DocumentService:
         if doc is None:
             raise ResourceNotFoundException()
 
-        # if doc.content:
-        #     self.ai_service.generate_embedding(doc.content)
+        if doc.content and doc.title:
+            embeddings = self.ai_service.generate_embeddings(doc.title, doc.content)
+            if embeddings is None:
+                raise ValueError("Failed to generate embeddings for the document.")
+
+            doc = await self.document_repository.update_embeddings(
+                id=document_id, vector=embeddings
+            )
+            assert doc is not None
 
         return doc
 
@@ -50,8 +57,9 @@ def get_document_service(
     document_repository: Annotated[
         DocumentRepository, Depends(get_document_repository)
     ],
+    ai_service: Annotated[AiService, Depends(get_ai_service)],
 ) -> DocumentService:
     return DocumentService(
         document_repository=document_repository,
-        ai_service=AiService(),
+        ai_service=ai_service,
     )

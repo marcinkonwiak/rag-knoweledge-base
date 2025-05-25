@@ -62,3 +62,4 @@ reportUnannotatedClassAttribute = false
 reportIgnoreCommentWithoutRule = false
 reportUninitializedInstanceVariable = false
 reportImportCycles = false
+reportMissingTypeStubs = false
