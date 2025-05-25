@@ -1,6 +1,7 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
+import logfire
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -9,6 +10,9 @@ from src.auth import azure_scheme
 from src.exceptions import ResourceAlreadyExistsException, ResourceNotFoundException
 from src.router import router
 from src.settings import settings
+
+logfire.configure()
+logfire.instrument_pydantic_ai()
 
 
 @asynccontextmanager

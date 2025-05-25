@@ -2,10 +2,21 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
+from src.ai.service import AiService, get_ai_service
+from src.database.core import DbSession
 from src.document.schemas import DocumentInDB, DocumentInput
 from src.document.service import DocumentService, get_document_service
 
 router = APIRouter()
+
+
+@router.get("/chat")
+async def chat(
+    ai_service: Annotated[AiService, Depends(get_ai_service)],
+    session: DbSession,
+    query: str,
+) -> str:
+    return await ai_service.chat(query, db_session=session)
 
 
 @router.get("/{document_id}")

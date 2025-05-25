@@ -1,6 +1,8 @@
 from google.genai import Client
 from google.genai.types import EmbedContentConfig
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.ai.embeddings_agent import Deps, agent
 from src.settings import settings
 
 
@@ -23,6 +25,14 @@ class AiService:
                 return embedding.values
 
         return None
+
+    async def chat(self, content: str, db_session: AsyncSession) -> str:
+        deps = Deps(google_client=self.client, db=db_session)
+        res = await agent.run(
+            f"Search query: {content}",
+            deps=deps,
+        )
+        return res.output
 
 
 def get_ai_service() -> AiService:

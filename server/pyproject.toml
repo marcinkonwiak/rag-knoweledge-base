@@ -16,7 +16,7 @@ dependencies = [
     "llama-index-vector-stores-postgres>=0.4.2",
     "pgvector>=0.4.0",
     "psycopg2-binary>=2.9.10",
-    "pydantic-ai[logfire]>=0.0.41",
+    "pydantic-ai[logfire]~=0.2.4",
     "pydantic-settings>=2.8.1",
     "python-dotenv>=1.0.1",
     "sqlalchemy>=2.0.39",
@@ -35,12 +35,12 @@ target-version = "py313"
 extend-exclude = ["**/migrations/*"]
 [tool.ruff.lint]
 select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "F", # pyflakes
+    "I", # isort
     "C4", # flake8-comprehensions
-    "B",  # flake8-bugbear
+    "B", # flake8-bugbear
     "UP", # pyupgrade
 ]
 

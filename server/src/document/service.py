@@ -27,11 +27,23 @@ class DocumentService:
         return await self.document_repository.get_all(skip=skip, limit=limit)
 
     async def create(self, document: DocumentInput) -> DocumentInDB:
-        return await self.document_repository.create(obj_in=document)
+        doc = await self.document_repository.create(obj_in=document)
+        doc = await self.generate_embeddings(document_id=doc.id)
+
+        return doc
 
     async def update(self, document_id: int, document: DocumentInput) -> DocumentInDB:
         doc = await self.document_repository.update(id=document_id, obj_in=document)
         if doc is None:
+            raise ResourceNotFoundException()
+
+        doc = await self.generate_embeddings(document_id=document_id)
+
+        return doc
+
+    async def generate_embeddings(self, document_id: int) -> DocumentInDB:
+        doc = await self.document_repository.get_by_id(document_id)
+        if not doc:
             raise ResourceNotFoundException()
 
         if doc.content and doc.title:
