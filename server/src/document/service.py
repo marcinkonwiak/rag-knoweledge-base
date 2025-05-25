@@ -1,10 +1,22 @@
 from typing import Annotated
 
 from fastapi import Depends
+from pydantic_ai.messages import (
+    ModelMessage,
+    ModelRequest,
+    ModelResponse,
+    TextPart,
+    UserPromptPart,
+)
 
 from src.ai.service import AiService, get_ai_service
 from src.document.repository import DocumentRepository, get_document_repository
-from src.document.schemas import DocumentInDB, DocumentInput
+from src.document.schemas import (
+    DocumentChatInput,
+    DocumentChatRole,
+    DocumentInDB,
+    DocumentInput,
+)
 from src.exceptions import ResourceNotFoundException
 
 
@@ -63,6 +75,30 @@ class DocumentService:
         if doc is None:
             raise ResourceNotFoundException()
         return None
+
+    async def chat(self, chat_in: DocumentChatInput) -> str:
+        pydantic_history: list[ModelMessage] = []
+        for message in chat_in.history:
+            if message.role == DocumentChatRole.USER:
+                pydantic_history.append(
+                    ModelRequest(
+                        parts=[
+                            UserPromptPart(
+                                content=message.content,
+                            )
+                        ]
+                    )
+                )
+            elif message.role == DocumentChatRole.AI:
+                pydantic_history.append(
+                    ModelResponse(
+                        parts=[TextPart(content=message.content)],
+                    )
+                )
+
+        return await self.ai_service.chat(
+            content=chat_in.query, message_history=pydantic_history
+        )
 
 
 def get_document_service(
