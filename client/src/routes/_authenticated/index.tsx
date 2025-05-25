@@ -30,14 +30,14 @@ function Index() {
   if (isError) return <div>Error loading documents</div>;
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <AppHeader breadcrumbTitle={"Documents"} />
-      <div className="p-6">
+      <div className="flex-1 p-6 overflow-hidden">
         <DocumentsTable
           data={documents ?? []}
           onDataChange={handleDataChange}
         />
       </div>
-    </>
+    </div>
   );
 }

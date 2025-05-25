@@ -91,7 +91,7 @@ export function DocumentsTable({ data, onDataChange }: DocumentsTableProps) {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 h-full flex flex-col">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold">Documents</h2>
         <Button onClick={handleAdd} disabled={isLoading}>
@@ -100,7 +100,9 @@ export function DocumentsTable({ data, onDataChange }: DocumentsTableProps) {
         </Button>
       </div>
 
-      <DataTable columns={columns} data={data} />
+      <div className="flex-1 overflow-hidden">
+        <DataTable columns={columns} data={data} />
+      </div>
 
       <DocumentModal
         isOpen={isModalOpen}
