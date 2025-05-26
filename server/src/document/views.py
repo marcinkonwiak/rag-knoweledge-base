@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
+from starlette.responses import StreamingResponse
 
 from src.document.schemas import DocumentChatInput, DocumentInDB, DocumentInput
 from src.document.service import DocumentService, get_document_service
@@ -12,8 +13,10 @@ router = APIRouter()
 async def chat(
     chat_in: DocumentChatInput,
     document_service: Annotated[DocumentService, Depends(get_document_service)],
-) -> str:
-    return await document_service.chat(chat_in)
+) -> StreamingResponse:
+    return StreamingResponse(
+        await document_service.chat(chat_in), media_type="text/plain"
+    )
 
 
 @router.get("/{document_id}")

@@ -1,3 +1,6 @@
+import asyncio
+from collections.abc import AsyncGenerator
+
 from google.genai import Client
 from google.genai.types import EmbedContentConfig
 from pydantic_ai.messages import ModelMessage
@@ -31,17 +34,22 @@ class AiService:
 
     async def chat(
         self, content: str, message_history: list[ModelMessage] | None = None
-    ) -> str:
+    ) -> AsyncGenerator[bytes]:
         if message_history is None:
             message_history = []
 
         deps = Deps(google_client=self.client, db=self.session)
-        res = await agent.run(
-            f"{content}",
-            deps=deps,
-            message_history=message_history,
-        )
-        return res.output
+
+        async def stream() -> AsyncGenerator[bytes]:
+            async with agent.run_stream(
+                f"Search query: `{content}`",
+                message_history=message_history,
+                deps=deps,
+            ) as result:
+                async for text in result.stream_text(delta=True):
+                    yield text.encode("utf-8") + b"\n"
+
+        return stream()
 
 
 def get_ai_service(

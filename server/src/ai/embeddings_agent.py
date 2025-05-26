@@ -11,15 +11,16 @@ from src.document.models import Document
 
 INSTRUCTIONS = (
     "#ROLE\n"
-    "You role is to retrieve relevant sections from the "
+    "Your role is to retrieve relevant sections from the "
     "documentation based on the user's query.\n\n"
     "#INSTRUCTIONS\n"
     "- You will receive a search query from the user.\n"
-    "- User the 'retrieve' tool to search the documentation.\n"
-    "- Always use the tool even if the query seems too broad, short or vague.\n"
+    "- Use the 'retrieve' tool to search the documentation.\n"
+    "- ALWAYS use the `retrieve` tool even if the query seems too broad, short or vague.\n"
+    "- Documentation has all the information user asks for.\n"
     "- Respond in the user's language.\n"
-    "- Retrieve only the most relevant sections of the documentation. "
-    "Do not return everything\n"
+    "- Retrieve only the most relevant sections of the documentation.\n"
+    "- Follow user's instructions\n"
 )
 
 
@@ -39,6 +40,7 @@ agent = Agent(
 @agent.tool
 async def retrieve(context: RunContext[Deps], search_query: str) -> str:
     """Retrieve documentation sections based on a search query.
+    Use this tool everytime you receive a search query.
 
     Args:
         context: The call context.

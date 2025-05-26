@@ -1,3 +1,4 @@
+from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from fastapi import Depends
@@ -76,7 +77,7 @@ class DocumentService:
             raise ResourceNotFoundException()
         return None
 
-    async def chat(self, chat_in: DocumentChatInput) -> str:
+    async def chat(self, chat_in: DocumentChatInput) -> AsyncGenerator[bytes]:
         pydantic_history: list[ModelMessage] = []
         for message in chat_in.history:
             if message.role == DocumentChatRole.USER:
