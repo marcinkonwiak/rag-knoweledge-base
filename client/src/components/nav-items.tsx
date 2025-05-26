@@ -1,4 +1,4 @@
-import { Frame, MessageCircle } from "lucide-react";
+import { FileText, MessageCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import {
@@ -12,12 +12,12 @@ import {
 export function NavItems() {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Projects</SidebarGroupLabel>
+      <SidebarGroupLabel>Menu</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <Link to="/">
-              <Frame />
+              <FileText />
               <span>Documents</span>
             </Link>
           </SidebarMenuButton>
