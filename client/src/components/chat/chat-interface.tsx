@@ -128,25 +128,7 @@ export function ChatInterface() {
         <div className="max-w-4xl mx-auto px-4 py-6">
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full text-muted-foreground">
-              <div className="text-center space-y-4">
-                <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                  <svg
-                    className="w-8 h-8 text-white"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2 text-foreground">
-                    How can I help you today?
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Start a conversation with your AI assistant
-                  </p>
-                </div>
-              </div>
+              Ask a question
             </div>
           ) : (
             <div className="space-y-1">
@@ -167,7 +149,7 @@ export function ChatInterface() {
       {/* Chat Input Area */}
       <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-4xl mx-auto p-4">
-          <div className="relative flex items-end gap-3 bg-background border border-border rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500/50 transition-all">
+          <div className="relative flex items-end gap-3 bg-background border border-border rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:border-ring transition-all">
             <Textarea
               placeholder="Message AI Assistant..."
               value={inputValue}
@@ -189,7 +171,7 @@ export function ChatInterface() {
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
               size="icon"
-              className="m-2 h-8 w-8 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:opacity-50"
+              className="m-2 h-8 w-8 rounded-lg"
             >
               <Send className="h-4 w-4" />
             </Button>
