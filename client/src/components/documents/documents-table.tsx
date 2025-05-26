@@ -2,6 +2,16 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Plus } from "lucide-react";
 import { DataTable } from "./data-table";
 import { DocumentModal } from "./document-modal";
@@ -25,6 +35,10 @@ export function DocumentsTable({ data, onDataChange }: DocumentsTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingDocument, setEditingDocument] = useState<ApiDocument | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [documentToDelete, setDocumentToDelete] = useState<Document | null>(null);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const { apiClient } = useApiClient();
 
   const handleEdit = async (document: Document) => {
@@ -37,26 +51,35 @@ export function DocumentsTable({ data, onDataChange }: DocumentsTableProps) {
       setIsModalOpen(true);
     } catch (error) {
       console.error("Failed to fetch document:", error);
-      alert("Failed to load document. Please try again.");
+      setErrorMessage("Failed to load document. Please try again.");
+      setErrorDialogOpen(true);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = async (document: Document) => {
-    if (!apiClient) return;
+    setDocumentToDelete(document);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!apiClient || !documentToDelete) return;
     
-    if (confirm("Are you sure you want to delete this document?")) {
-      try {
-        setIsLoading(true);
-        await deleteDocument(apiClient, document.id);
-        onDataChange();
-      } catch (error) {
-        console.error("Failed to delete document:", error);
-        alert("Failed to delete document. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
+    try {
+      setIsLoading(true);
+      await deleteDocument(apiClient, documentToDelete.id);
+      onDataChange();
+      setDeleteDialogOpen(false);
+      setDocumentToDelete(null);
+    } catch (error) {
+      console.error("Failed to delete document:", error);
+      setErrorMessage("Failed to delete document. Please try again.");
+      setErrorDialogOpen(true);
+      setDeleteDialogOpen(false);
+      setDocumentToDelete(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -111,6 +134,46 @@ export function DocumentsTable({ data, onDataChange }: DocumentsTableProps) {
         document={editingDocument}
         isLoading={isLoading}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the document
+              "{documentToDelete?.title}" and remove it from the system.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDelete}
+              disabled={isLoading}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isLoading ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Error Dialog */}
+      <AlertDialog open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Error</AlertDialogTitle>
+            <AlertDialogDescription>
+              {errorMessage}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setErrorDialogOpen(false)}>
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
