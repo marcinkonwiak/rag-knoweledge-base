@@ -1,7 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar.tsx";
 import { AppSidebar } from "@/components/app-sidebar.tsx";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
@@ -39,7 +38,6 @@ export function Authenticated() {
           <Outlet />
         </SidebarInset>
       </SidebarProvider>
-      <TanStackRouterDevtools position={"bottom-right"} />
     </div>
   );
 }

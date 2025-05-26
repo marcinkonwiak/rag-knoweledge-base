@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import { ChatMessage } from "@/components/chat/chat-message";
 import { useApiClient } from "@/hooks/use-api-client";
@@ -149,36 +149,26 @@ export function ChatInterface() {
       {/* Chat Input Area */}
       <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-4xl mx-auto p-4">
-          <div className="relative flex items-end gap-3 bg-background border border-border rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:border-ring transition-all">
-            <Textarea
+          <div className="relative flex items-center gap-3 bg-background border border-border rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:border-ring transition-all">
+            <Input
               placeholder="Message AI Assistant..."
               value={inputValue}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setInputValue(e.target.value)
               }
               onKeyDown={handleKeyPress}
               disabled={isLoading}
-              className="flex-1 min-h-[52px] max-h-32 border-0 resize-none bg-transparent px-4 py-3 text-sm focus:ring-0 focus:outline-none focus-visible:ring-0 placeholder:text-muted-foreground"
-              rows={1}
-              style={{
-                resize: "none",
-                overflow: "hidden",
-                height: "auto",
-                minHeight: "52px",
-              }}
+              className="flex-1 border-0 bg-transparent px-4 py-3 text-sm focus:ring-0 focus:outline-none focus-visible:ring-0 placeholder:text-muted-foreground h-12"
             />
             <Button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
               size="icon"
-              className="m-2 h-8 w-8 rounded-lg"
+              className="h-8 w-8 rounded-lg mr-3"
             >
               <Send className="h-4 w-4" />
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground text-center mt-3">
-            AI can make mistakes. Check important information.
-          </p>
         </div>
       </div>
     </div>
