@@ -1,4 +1,3 @@
-import asyncio
 from collections.abc import AsyncGenerator
 
 from google.genai import Client
@@ -7,6 +6,7 @@ from pydantic_ai.messages import ModelMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.ai.embeddings_agent import Deps, agent
+from src.ai.events import AgentDelta, AgentDone
 from src.database.core import DbSession
 from src.settings import settings
 
@@ -47,7 +47,11 @@ class AiService:
                 deps=deps,
             ) as result:
                 async for text in result.stream_text(delta=True):
-                    yield text.encode("utf-8") + b"\n"
+                    delta_event = AgentDelta(v=text)
+                    yield delta_event.to_sse()
+
+                done_event = AgentDone()
+                yield done_event.to_sse()
 
         return stream()
 

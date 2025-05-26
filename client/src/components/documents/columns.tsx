@@ -40,6 +40,6 @@ export const createColumns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<Doc
         </div>
       );
     },
-    size: 120,
+    size: 20,
   },
 ];
