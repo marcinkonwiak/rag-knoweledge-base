@@ -7,7 +7,7 @@ import type {
 export class ApiClient {
   private instance: IPublicClientApplication;
   private account: AccountInfo;
-  private baseURL: string;
+  public baseURL: string;
   private scopes: string[];
   private authority: string;
 
@@ -31,7 +31,7 @@ export class ApiClient {
       "https://login.microsoftonline.com/d267408e-f179-4c25-a9f7-e52293bafeae";
   }
 
-  private async getAccessToken(): Promise<string> {
+  async getAccessToken(): Promise<string> {
     const tokenRequest: SilentRequest = {
       scopes: this.scopes,
       authority: this.authority,
@@ -93,5 +93,25 @@ export class ApiClient {
 
   async delete<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: "DELETE" });
+  }
+
+  async streamPost(endpoint: string, data?: unknown): Promise<Response> {
+    const accessToken = await this.getAccessToken();
+    const url = `${this.baseURL}${endpoint}`;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: data ? JSON.stringify(data) : undefined,
+    });
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    return response;
   }
 }
