@@ -15,7 +15,7 @@ async def chat(
     document_service: Annotated[DocumentService, Depends(get_document_service)],
 ) -> StreamingResponse:
     return StreamingResponse(
-        await document_service.chat(chat_in), media_type="text/event-stream"  # Changed media_type
+        await document_service.chat(chat_in), media_type="text/event-stream"
     )
 
 
