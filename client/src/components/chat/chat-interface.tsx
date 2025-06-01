@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { ChatMessage } from "@/components/chat/chat-message";
 import { useApiClient } from "@/hooks/use-api-client";
 import { streamChat, type ChatMessage as ApiChatMessage } from "@/lib/api/chat";
 import * as React from "react";
+import { AudioRecorderButton } from "@/components/chat/audio-recorder-button";
 
 export interface Message {
   id: string;
@@ -20,6 +21,7 @@ export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSpeechProcessing, setIsSpeechProcessing] = useState(false);
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null,
   );
@@ -150,15 +152,29 @@ export function ChatInterface() {
       <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-4xl mx-auto p-4">
           <div className="relative flex items-center gap-3 bg-background border border-border rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-ring focus-within:border-ring transition-all">
-            <Input
-              placeholder="Message AI Assistant..."
-              value={inputValue}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setInputValue(e.target.value)
-              }
-              onKeyDown={handleKeyPress}
+            <div className="flex-1 relative">
+              <Input
+                placeholder={isSpeechProcessing ? "Processing speech..." : "Message AI Assistant..."}
+                value={inputValue}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setInputValue(e.target.value)
+                }
+                onKeyDown={handleKeyPress}
+                disabled={isLoading || isSpeechProcessing}
+                className="flex-1 w-full border-0 bg-transparent px-4 py-3 text-sm focus:ring-0 focus:outline-none focus-visible:ring-0 placeholder:text-muted-foreground h-12"
+              />
+              {isSpeechProcessing && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </div>
+              )}
+            </div>
+            <AudioRecorderButton
+              apiClient={apiClient}
+              onTranscriptionReceived={(text) => setInputValue(text)}
+              onProcessingStateChange={setIsSpeechProcessing}
               disabled={isLoading}
-              className="flex-1 border-0 bg-transparent px-4 py-3 text-sm focus:ring-0 focus:outline-none focus-visible:ring-0 placeholder:text-muted-foreground h-12"
+              className="mr-2"
             />
             <Button
               onClick={handleSendMessage}

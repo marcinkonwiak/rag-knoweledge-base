@@ -23,6 +23,7 @@ dependencies = [
     "python-dotenv>=1.0.1",
     "python-multipart>=0.0.9",
     "sqlalchemy>=2.0.39",
+    "ffmpeg-python>=0.2.0",
 ]
 
 [dependency-groups]

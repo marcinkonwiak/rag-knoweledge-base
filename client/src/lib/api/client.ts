@@ -114,4 +114,32 @@ export class ApiClient {
 
     return response;
   }
+
+  async uploadFile<T>(endpoint: string, file: File, additionalData?: Record<string, string>): Promise<T> {
+    const accessToken = await this.getAccessToken();
+    const url = `${this.baseURL}${endpoint}`;
+
+    const formData = new FormData();
+    formData.append('audio_file', file);
+
+    if (additionalData) {
+      Object.entries(additionalData).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+    }
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  }
 }
