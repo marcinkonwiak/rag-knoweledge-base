@@ -11,8 +11,9 @@ from src.exceptions import ResourceAlreadyExistsException, ResourceNotFoundExcep
 from src.router import router
 from src.settings import settings
 
-logfire.configure()
-logfire.instrument_pydantic_ai()
+if settings.LOGFIRE_TOKEN:
+    logfire.configure()
+    logfire.instrument_pydantic_ai()
 
 
 @asynccontextmanager

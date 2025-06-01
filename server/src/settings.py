@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     APP_CLIENT_ID: str = ""
     TENANT_ID: str = ""
     SCOPE_DESCRIPTION: str = "user_impersonation"
+    AZURE_SPEECH_KEY: str = ""
+    AZURE_SPEECH_REGION: str = ""
 
     @computed_field
     @property
