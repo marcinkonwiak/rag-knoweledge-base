@@ -7,10 +7,7 @@ load_dotenv()
 
 class Settings(BaseSettings):
     DATABASE_URL: str = ""
-    BACKEND_CORS_ORIGINS: list[str | AnyHttpUrl] = [
-        "http://localhost:8000",
-        "http://localhost:5173",
-    ]
+    BACKEND_CORS_ORIGINS: list[str | AnyHttpUrl] = []
     GEMINI_API_KEY: str = ""
     LOGFIRE_TOKEN: str = ""
 

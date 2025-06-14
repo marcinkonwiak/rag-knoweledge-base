@@ -22,7 +22,11 @@ export class ApiClient {
   ) {
     this.instance = instance;
     this.account = account;
-    this.baseURL = config.baseURL || "http://localhost:8000/api";
+    this.baseURL =
+      config.baseURL ||
+      (import.meta.env.DEV
+        ? "http://localhost:5173/api"
+        : "http://localhost:8000/api");
     this.scopes = config.scopes || [
       "api://78637b4f-3088-4520-adba-bd9809392f9e/user_impersonation",
     ];
@@ -115,12 +119,16 @@ export class ApiClient {
     return response;
   }
 
-  async uploadFile<T>(endpoint: string, file: File, additionalData?: Record<string, string>): Promise<T> {
+  async uploadFile<T>(
+    endpoint: string,
+    file: File,
+    additionalData?: Record<string, string>,
+  ): Promise<T> {
     const accessToken = await this.getAccessToken();
     const url = `${this.baseURL}${endpoint}`;
 
     const formData = new FormData();
-    formData.append('audio_file', file);
+    formData.append("audio_file", file);
 
     if (additionalData) {
       Object.entries(additionalData).forEach(([key, value]) => {

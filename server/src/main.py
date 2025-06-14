@@ -12,7 +12,7 @@ from src.router import router
 from src.settings import settings
 
 if settings.LOGFIRE_TOKEN:
-    logfire.configure()
+    logfire.configure(service_name="Knowledge-base")
     logfire.instrument_pydantic_ai()
 
 
