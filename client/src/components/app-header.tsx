@@ -1,5 +1,6 @@
 import { SidebarTrigger } from "@/components/ui/sidebar.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
+import { ThemeToggle } from "@/components/theme-toggle.tsx";
 
 interface AppHeaderProps {
   breadcrumbTitle: string;
@@ -15,6 +16,9 @@ export function AppHeader({ breadcrumbTitle }: AppHeaderProps) {
           className="mx-2 data-[orientation=vertical]:h-4"
         />
         <h1 className="text-base font-medium">{breadcrumbTitle}</h1>
+        <div className="ml-auto">
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );
