@@ -68,18 +68,23 @@ Users (usr)              Documents
 - pnpm
 - docker
 
+Przed uruchomieniem należy utworzyć pliki `.env` na podstawie `.env.example`.
+
 Uruchomienie backendu:
 ```bash
+cd server
 uv run run.py
 ```
 
 Uruchomienie frontendu:
 ```bash
+cd client
 pnpm install
 pnpm dev
 ```
 
 ### Uruchomienie bazy danych:
 ```bash
+cd server
 docker compose up -d
 ```
