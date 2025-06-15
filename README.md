@@ -60,3 +60,26 @@ Users (usr)              Documents
 
 ![Knowledge Base Screenshot](./screenshots/ss1.png)
 ![Knowledge Base Screenshot](./screenshots/ss2.png)
+
+## Uruchomienie aplikacji
+
+### Wymagania:
+- uv
+- pnpm
+- docker
+
+Uruchomienie backendu:
+```bash
+uv run run.py
+```
+
+Uruchomienie frontendu:
+```bash
+pnpm install
+pnpm dev
+```
+
+### Uruchomienie bazy danych:
+```bash
+docker compose up -d
+```
